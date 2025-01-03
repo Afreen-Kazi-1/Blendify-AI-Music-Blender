@@ -1,0 +1,89 @@
+GET http://localhost:3000
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzU4MjQ2ODQsImV4cCI6MTczNTgyODI4NCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.3Ao1dqF9E_Xwvt4CmtG4uQn85-1NFfNDF8A9KEvUsQI
+
+
+###
+POST http://localhost:3000/auth/login 
+Content-Type: application/json
+
+{
+    "username": "test2",
+    "password": "blendify123@"
+}
+
+###
+POST http://localhost:3000/auth/register 
+Content-Type: application/json
+
+{
+    "email": "test2@gmail.com",
+    "name": "Tisha",
+    "username": "test2",
+    "password": "blendify123@",
+    "repeatPassword": "blendify123@"
+}
+
+###
+POST http://localhost:3000/auth/refresh-token 
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzUyMjg0MDMsImV4cCI6MTc2Njc4NjAwMywiYXVkIjoiNjc2ZDNmYjVhMTZkZTE2N2MwOGM0ODQwIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ivVv_yGb-9GdQ0Oc8aW_JGgapt2B0q4SqJxounjIU_M "
+}
+
+###
+DELETE http://localhost:3000/auth/logout
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzU4MjQ4NTAsImV4cCI6MTc2NzM4MjQ1MCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ECWLNUm1jxyV43VtBjAbyoPbg06XS24d1umxtk2qe-Q"
+}
+###
+
+POST http://localhost:3000/api/profile
+Content-Type: application/json
+
+{   
+  "username": "tisha",
+  "profilePicture": "picture.jpg",
+  "numberOfProjects": 5
+}
+
+###
+
+GET http://localhost:3000/user/settings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzU4MjQ2ODQsImV4cCI6MTczNTgyODI4NCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.3Ao1dqF9E_Xwvt4CmtG4uQn85-1NFfNDF8A9KEvUsQI
+###
+
+PUT http://localhost:3000/user/settings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzU4MjQ2ODQsImV4cCI6MTczNTgyODI4NCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.3Ao1dqF9E_Xwvt4CmtG4uQn85-1NFfNDF8A9KEvUsQI
+Content-Type: application/json
+
+{
+  "preferences": {
+    "autoSaveMashups": true,
+    "preferredFileFormat": "mp3",
+    "cloudStorageLink": "some-link"
+  },
+  "privacySettings": {
+    "isAccountPrivate": true,
+    "emailVerificationEnabled": false,
+    "recentActivityLog": [
+      { "action": "updated settings", "timestamp": "2025-01-01" }
+    ]
+  },
+  "communitySettings": {
+    "commentsEnabled": false,
+    "collaborationInvitations": true,
+    "mashupVisibility": "private"
+  }
+}
+
+###
+
+DELETE http://localhost:3000/user/settings/delete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzZkODAyZDQ1NDVlMmUwNDZhOGFhZTkiLCJpYXQiOjE3MzU4MjIzNTcsImV4cCI6MTczNTgyNTk1NywiYXVkIjoiNjc2ZDgwMmQ0NTQ1ZTJlMDQ2YThhYWU5IiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.vx6ibNBuuUjCXKUoVQWlQmVNI0njqmMnwVfAahJBZcI
+
+###
+
+GET http://localhost:3000/auth/google
