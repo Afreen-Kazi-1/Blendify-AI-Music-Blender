@@ -1,6 +1,10 @@
 GET http://localhost:3000
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzU4MjQ2ODQsImV4cCI6MTczNTgyODI4NCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.3Ao1dqF9E_Xwvt4CmtG4uQn85-1NFfNDF8A9KEvUsQI
 
+### Landing page
+GET http://localhost:3000/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY1NzkwMjUsImV4cCI6MTczNjU4MjYyNSwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.oOPOqpQeU8i5z0a7FRwjTTvUTu62ZwyyAbS5aX5aLOs
+
 
 ###
 POST http://localhost:3000/auth/login 
@@ -31,6 +35,36 @@ Content-Type: application/json
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzUyMjg0MDMsImV4cCI6MTc2Njc4NjAwMywiYXVkIjoiNjc2ZDNmYjVhMTZkZTE2N2MwOGM0ODQwIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ivVv_yGb-9GdQ0Oc8aW_JGgapt2B0q4SqJxounjIU_M "
 }
 
+### Blendpage
+POST http://localhost:3000/blendpage/create-blend
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY4NTQxODAsImV4cCI6MTczNjg1Nzc4MCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.5aZt_X3pTIkW6t2u9g8HJhEpv4tL5x3yQADN5AzawmQ
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="title"
+
+My First Mashup
+--boundary
+Content-Disposition: form-data; name="description"
+
+This is a test blend of two songs.
+--boundary
+Content-Disposition: form-data; name="visibility"
+
+public
+--boundary
+Content-Disposition: form-data; name="songs"; filename="song1.mp3"
+Content-Type: audio/mpeg
+
+< ./path/to/song1.mp3
+--boundary
+Content-Disposition: form-data; name="songs"; filename="song2.mp3"
+Content-Type: audio/mpeg
+
+< ./path/to/song2.mp3
+--boundary--
+
+
 ###
 DELETE http://localhost:3000/auth/logout
 Content-Type: application/json
@@ -39,7 +73,6 @@ Content-Type: application/json
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzU4MjQ4NTAsImV4cCI6MTc2NzM4MjQ1MCwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ECWLNUm1jxyV43VtBjAbyoPbg06XS24d1umxtk2qe-Q"
 }
 ###
-
 POST http://localhost:3000/api/profile
 Content-Type: application/json
 
@@ -84,7 +117,41 @@ Content-Type: application/json
 DELETE http://localhost:3000/user/settings/delete
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzZkODAyZDQ1NDVlMmUwNDZhOGFhZTkiLCJpYXQiOjE3MzU4MjIzNTcsImV4cCI6MTczNTgyNTk1NywiYXVkIjoiNjc2ZDgwMmQ0NTQ1ZTJlMDQ2YThhYWU5IiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.vx6ibNBuuUjCXKUoVQWlQmVNI0njqmMnwVfAahJBZcI
 
-###
+### about page
+GET http://localhost:3000/pages/about
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
 
+### help Page
+GET http://localhost:3000/pages/help
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
+
+### support page
+GET http://localhost:3000/support
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
+
+
+### support form
+POST http://localhost:3000/support/submit
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
+
+
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "message": "I need help with my mashup."
+}
+
+### community user current projects
+GET http://localhost:3000/community/my-projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
+
+
+### community public projects
+GET http://localhost:3000/community/public-projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
+
+
+###
 GET http://localhost:3000/auth/google
 

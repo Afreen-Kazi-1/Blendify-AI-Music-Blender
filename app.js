@@ -8,6 +8,12 @@ const { verifyAccessToken} = require('./jwt')
 const AuthRoute = require('./routes/auth.route')
 const ProfileRoute = require('./routes/profile.route')
 const userSettingsRoute = require('./routes/usersettings.route')
+const landingPageRoute = require('./routes/landingpage.route')
+const generalPagesRoute = require('./routes/generalpage.route')
+const supportRoute = require('./routes/supportpage.route')
+const communityRoute = require('./routes/community.route')
+const blendPageRoute = require('./routes/blendpage.route')
+
 const session = require('express-session');
 const passport = require('./passport');
 const app = express()
@@ -38,6 +44,17 @@ app.use('/auth', AuthRoute)
 app.use('/api', ProfileRoute);
 
 app.use('/user', userSettingsRoute)
+
+app.use('/', landingPageRoute)
+
+app.use('/pages', generalPagesRoute)
+
+app.use('/support', supportRoute)
+
+app.use('/community', communityRoute)
+
+app.use('/blendpage', blendPageRoute)
+
 
 app.use(async(req, res, next) => {
     next(createError.NotFound('This route does not exist'))
