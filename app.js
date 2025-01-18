@@ -4,6 +4,8 @@ const createError = require('http-errors')
 require('dotenv').config()
 require ('./mongodb')
 const { verifyAccessToken} = require('./jwt')
+const path = require('path')
+const cors = require('cors')
 
 const AuthRoute = require('./routes/auth.route')
 const ProfileRoute = require('./routes/profile.route')
@@ -16,7 +18,9 @@ const blendPageRoute = require('./routes/blendpage.route')
 
 const session = require('express-session');
 const passport = require('./passport');
+
 const app = express()
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -55,6 +59,7 @@ app.use('/community', communityRoute)
 
 app.use('/blendpage', blendPageRoute)
 
+app.use(express.static(path.join(__dirname, 'frontend/build')))
 
 app.use(async(req, res, next) => {
     next(createError.NotFound('This route does not exist'))
