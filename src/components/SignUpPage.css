@@ -1,0 +1,117 @@
+.signup-main-content {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 90px;
+}
+
+.signup-container {
+    position: relative;
+    width: 540px;
+    height: 540px;
+}
+
+.signup-ring {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        red, orange, yellow, green, blue, indigo, violet, red
+    );
+    mask: radial-gradient(closest-side, transparent 85%, black 71%);
+    -webkit-mask: radial-gradient(closest-side, transparent 85%, black 71%);
+    animation: rotate 8s linear infinite;
+}
+
+.signup-form-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+}
+
+.signup-title {
+    color: #FF69B4;
+    font-size: 48px;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+    margin: 0;
+}
+
+.signup-subtitle {
+    color: #FF1493;
+    font-size: 24px;
+    font-family: 'Amatic SC', cursive;
+    margin: 5px 0 30px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.form-grid input {
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-grid input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    letter-spacing: 0.6px;
+}
+
+.button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 500px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .signup-container {
+        width: 100%;
+        height: 100vw;
+        max-height: 540px;
+    }
+    
+    .signup-form-content {
+        width: 90%;
+    }
+}
