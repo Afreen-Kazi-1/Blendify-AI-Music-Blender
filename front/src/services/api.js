@@ -28,3 +28,12 @@ export const apiClient = {
     return response.json();
   }
 };
+
+// Example authenticated request in components:
+import { apiClient } from '../services/api';
+
+// Make API calls with authentication
+const response = await apiClient.request(API_ENDPOINTS.auth.login, {
+  method: 'POST',
+  body: JSON.stringify(credentials)
+});
