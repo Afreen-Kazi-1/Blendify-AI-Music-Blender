@@ -1,0 +1,601 @@
+diff --git a/back/app.js b/back/app.js
+index df77ab3..519be51 100644
+--- a/back/app.js
++++ b/back/app.js
+@@ -1,84 +1,76 @@
+-const express = require('express')
+-const morgan = require('morgan')
+-const createError = require('http-errors')
+-require('dotenv').config()
+-require ('./mongodb')
+-const { verifyAccessToken} = require('./jwt')
+-const path = require('path')
+-const cors = require('cors')
+-
+-const AuthRoute = require('./routes/auth.route')
+-const ProfileRoute = require('./routes/profile.route')
+-const userSettingsRoute = require('./routes/usersettings.route')
+-const landingPageRoute = require('./routes/landingpage.route')
+-const generalPagesRoute = require('./routes/generalpage.route')
+-const supportRoute = require('./routes/supportpage.route')
+-const communityRoute = require('./routes/community.route')
+-const blendPageRoute = require('./routes/blendpage.route')
+-
+-const session = require('express-session');
+-const passport = require('./passport');
+-
+-const app = express()
+-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+-app.use(morgan('dev'))
+-app.use(express.json())
+-app.use(express.urlencoded({extended: true}))
+-
+-
+-app.get('/', verifyAccessToken, async (req, res, next) => {
+-    
+-    res.send('Hello from express.')
+-})
+-
+-app.use(express.json())
++const express = require("express");
++const morgan = require("morgan");
++const createError = require("http-errors");
++require("dotenv").config();
++require("./mongodb");
++const { verifyAccessToken } = require("./jwt");
++const path = require("path");
++const cors = require("cors");
++
++const AuthRoute = require("./routes/auth.route");
++const ProfileRoute = require("./routes/profile.route");
++const userSettingsRoute = require("./routes/usersettings.route");
++const landingPageRoute = require("./routes/landingpage.route");
++const generalPagesRoute = require("./routes/generalpage.route");
++const supportRoute = require("./routes/supportpage.route");
++const communityRoute = require("./routes/community.route");
++const blendPageRoute = require("./routes/blendpage.route");
++
++const session = require("express-session");
++const passport = require("./passport");
++
++const app = express();
++app.use(cors({ origin: "http://localhost:5173", credentials: true }));
++app.use(morgan("dev"));
++app.use(express.json());
++app.use(express.urlencoded({ extended: true }));
++
++app.get("/", verifyAccessToken, async (req, res, next) => {
++  res.send("Hello from express.");
++});
++
++app.use(express.json());
+ app.use(
+   session({
+     secret: process.env.SESSION_SECRET,
+     resave: false,
+     saveUninitialized: false,
+-  })
+-)
+-app.use(passport.initialize())
+-app.use(passport.session())
++  }),
++);
++app.use(passport.initialize());
++app.use(passport.session());
+ 
++app.use("/auth", AuthRoute);
+ 
+-app.use('/auth', AuthRoute)
++app.use("/api", ProfileRoute);
+ 
+-app.use('/api', ProfileRoute);
++app.use("/user", userSettingsRoute);
+ 
+-app.use('/user', userSettingsRoute)
++app.use("/", landingPageRoute);
+ 
+-app.use('/', landingPageRoute)
++app.use("/pages", generalPagesRoute);
+ 
+-app.use('/pages', generalPagesRoute)
++app.use("/support", supportRoute);
+ 
+-app.use('/support', supportRoute)
++app.use("/community", communityRoute);
+ 
+-app.use('/community', communityRoute)
++app.use("/blendpage", blendPageRoute);
+ 
+-app.use('/blendpage', blendPageRoute)
++app.use(express.static(path.join(__dirname, "frontend/build")));
+ 
+-app.use(express.static(path.join(__dirname, 'frontend/build')))
+-
+-app.use(async(req, res, next) => {
+-    next(createError.NotFound('This route does not exist'))
+-})
++app.use(async (req, res, next) => {
++  next(createError.NotFound("This route does not exist"));
++});
+ 
+ app.use((err, req, res, next) => {
+-    const statusCode = err.status || 500; 
+-    res.status(statusCode).send({
+-        error: {
+-            status: statusCode,
+-            message: err.message || 'Internal Server Error',
+-        },
+-    })
+-})
++  console.error(err.stack);
++  res.status(err.status || 500).json({
++    error: err.message || "Internal Server Error",
++  });
++});
+ 
+-const PORT = process.env.PORT || 3000
++const PORT = process.env.PORT || 3000;
+ 
+ app.listen(PORT, () => {
+-    console.log(`server running on port ${PORT}`)
+-})
+-
+-
++  console.log(`server running on port ${PORT}`);
++});
+diff --git a/front/package.json b/front/package.json
+index 8955271..4744beb 100644
+--- a/front/package.json
++++ b/front/package.json
+@@ -10,6 +10,7 @@
+     "preview": "vite preview"
+   },
+   "dependencies": {
++    "axios": "^1.7.9",
+     "lucide-react": "^0.473.0",
+     "react": "^18.3.1",
+     "react-dom": "^18.3.1",
+diff --git a/front/src/components/BlendPage.jsx b/front/src/components/BlendPage.jsx
+index 6460a98..6a8cd93 100644
+--- a/front/src/components/BlendPage.jsx
++++ b/front/src/components/BlendPage.jsx
+@@ -1,25 +1,24 @@
+-import React, { useState, useEffect } from 'react';
+-import { useNavigate, Link } from 'react-router-dom';
+-import Layout from './Layout';
+-import './BlendPage.css';
++import React, { useState } from "react";
++import { useNavigate } from "react-router-dom";
++import { blendService } from "../services/blend.service";
+ 
+ const BlendPage = () => {
+   const navigate = useNavigate();
+-  const [showHeader, setShowHeader] = useState(false);
++  const [blendName, setBlendName] = useState("");
++  const [error, setError] = useState("");
+ 
+-  useEffect(() => {
+-    const handleScroll = () => {
+-      setShowHeader(window.scrollY > 0);
+-    };
+-
+-    window.addEventListener('scroll', handleScroll);
+-    return () => window.removeEventListener('scroll', handleScroll);
+-  }, []);
+-
+-  const handleSubmit = (e) => {
++  const handleSubmit = async (e) => {
+     e.preventDefault();
+-    navigate('/importmedia');
+-    
++    try {
++      const formData = new FormData();
++      formData.append("title", blendName);
++      // Add other form data as needed
++
++      await blendService.createBlend(formData);
++      navigate("/importmedia");
++    } catch (err) {
++      setError(err.response?.data?.error || "Failed to create blend");
++    }
+   };
+ 
+   return (
+@@ -48,7 +47,9 @@ const BlendPage = () => {
+               <div className="blend-form-group">
+                 <input type="text" placeholder="Blend Name" required />
+               </div>
+-              <button type="submit" className="blend-button">Blend</button>
++              <button type="submit" className="blend-button">
++                Blend
++              </button>
+             </form>
+           </div>
+         </div>
+@@ -57,14 +58,22 @@ const BlendPage = () => {
+           <div className="blend-footer-content">
+             <div className="blend-footer-section">
+               <h3 className="blend-footer-heading">Blendify</h3>
+-              <Link to="/" className="blend-footer-link">Home</Link>
+-              <Link to="/login" className="blend-footer-link">Login</Link>
++              <Link to="/" className="blend-footer-link">
++                Home
++              </Link>
++              <Link to="/login" className="blend-footer-link">
++                Login
++              </Link>
+             </div>
+-            
++
+             <div className="blend-footer-section">
+               <h3 className="blend-footer-heading">Help</h3>
+-              <Link to="/faq" className="blend-footer-link">FAQ</Link>
+-              <Link to="/contact" className="blend-footer-link">Contact us</Link>
++              <Link to="/faq" className="blend-footer-link">
++                FAQ
++              </Link>
++              <Link to="/contact" className="blend-footer-link">
++                Contact us
++              </Link>
+             </div>
+           </div>
+         </footer>
+@@ -73,4 +82,4 @@ const BlendPage = () => {
+   );
+ };
+ 
+-export default BlendPage;
+\ No newline at end of file
++export default BlendPage;
+diff --git a/front/src/components/LoginPage.jsx b/front/src/components/LoginPage.jsx
+index 9f73714..9a27d20 100644
+--- a/front/src/components/LoginPage.jsx
++++ b/front/src/components/LoginPage.jsx
+@@ -1,76 +1,183 @@
+-import React, { useState, useEffect } from 'react';
+-import { useNavigate, Link } from 'react-router-dom';
+-import './LoginPage.css';
+-import Layout from './Layout';
++import React, { useState, useEffect } from "react";
++import { useNavigate, Link } from "react-router-dom";
++import axios from "axios";
++import Layout from "./Layout";
++import "./LoginPage.css";
+ 
+ const LoginPage = () => {
+   const navigate = useNavigate();
+   const [showHeader, setShowHeader] = useState(false);
++  const [credentials, setCredentials] = useState({
++    username: "",
++    password: "",
++  });
++  const [error, setError] = useState("");
++  const [loading, setLoading] = useState(false);
+ 
+   useEffect(() => {
+     const handleScroll = () => {
+       setShowHeader(window.scrollY > 0);
+     };
+ 
+-    window.addEventListener('scroll', handleScroll);
+-    return () => window.removeEventListener('scroll', handleScroll);
++    window.addEventListener("scroll", handleScroll);
++    return () => window.removeEventListener("scroll", handleScroll);
+   }, []);
+ 
+-  const handleSubmit = (e) => {
++  const handleChange = (e) => {
++    setCredentials({
++      ...credentials,
++      [e.target.name]: e.target.value,
++    });
++    // Clear error when user starts typing
++    if (error) setError("");
++  };
++
++  const handleSubmit = async (e) => {
+     e.preventDefault();
+-    navigate('/blend');
++    setLoading(true);
++    setError("");
++
++    try {
++      const response = await axios.post(
++        "http://localhost:3000/auth/login",
++        credentials,
++      );
++
++      if (response.data.accesstoken && response.data.refreshtoken) {
++        // Store tokens
++        localStorage.setItem("accessToken", response.data.accesstoken);
++        localStorage.setItem("refreshToken", response.data.refreshtoken);
++
++        // Navigate to blend page on successful login
++        navigate("/blend");
++      } else {
++        setError("Invalid response from server");
++      }
++    } catch (err) {
++      console.error("Login error:", err);
++      setError(
++        err.response?.data?.error?.message ||
++          err.response?.data?.error ||
++          "Login failed. Please check your credentials.",
++      );
++    } finally {
++      setLoading(false);
++    }
+   };
+ 
+   return (
+     <Layout>
+-    <div className="login-body">
+-      {showHeader && (
+-        <div className="fixed-header">
+-          <div className="header-content">
+-            <h1 className="header-title">Blendify</h1>
+-            <Link to="/login" className="header-login-button">Login</Link>
+-          </div>
+-        </div>
+-      )}
+-     
+-      
+-      <div className="login-main-content">
+-        <div className="login-container">
+-          <div className="login-ring"></div>
+-          <div className="login-text-container">
+-            <h1 className="login-title">Blendify</h1>
+-            <p className="login-subtitle">Blend, Mash, Love, Share!</p>
+-          </div>
+-          <form className="login-form" onSubmit={handleSubmit}>
+-            <div className="login-form-group">
+-              <input type="text" placeholder="Username" required />
++      <div className="login-body">
++        {showHeader && (
++          <div className="fixed-header">
++            <div className="header-content">
++              <h1 className="header-title">Blendify</h1>
++              <Link to="/login" className="header-login-button">
++                Login
++              </Link>
+             </div>
+-            <div className="login-form-group">
+-              <input type="password" placeholder="Password" required />
++          </div>
++        )}
++
++        <div className="login-main-content">
++          <div className="login-container">
++            <div className="login-ring"></div>
++            <div className="login-text-container">
++              <h1 className="login-title">Blendify</h1>
++              <p className="login-subtitle">Blend, Mash, Love, Share!</p>
+             </div>
+-            <button type="submit" className="login-button">Login</button>
+-          </form>
+-        </div>
+-      </div>
+ 
+-      <footer className="footer">
+-        <div className="footer-content">
+-          <div className="footer-section">
+-            <h3 className="footer-heading">Blendify</h3>
+-            <Link to="/" className="footer-link">Home</Link>
+-            <Link to="/login" className="footer-link">Login</Link>
+-          </div>
+-          
+-          <div className="footer-section">
+-            <h3 className="footer-heading">Help</h3>
+-            <Link to="/faq" className="footer-link">FAQ</Link>
+-            <Link to="/contact" className="footer-link">Contact us</Link>
++            <form className="login-form" onSubmit={handleSubmit}>
++              <div className="login-form-group">
++                <input
++                  type="text"
++                  name="username"
++                  placeholder="Username"
++                  value={credentials.username}
++                  onChange={handleChange}
++                  required
++                  disabled={loading}
++                  className={error ? "error" : ""}
++                />
++              </div>
++
++              <div className="login-form-group">
++                <input
++                  type="password"
++                  name="password"
++                  placeholder="Password"
++                  value={credentials.password}
++                  onChange={handleChange}
++                  required
++                  disabled={loading}
++                  className={error ? "error" : ""}
++                />
++              </div>
++
++              {error && <div className="error-message">{error}</div>}
++
++              <button
++                type="submit"
++                className={`login-button ${loading ? "loading" : ""}`}
++                disabled={loading}
++              >
++                {loading ? "Logging in..." : "Login"}
++              </button>
++
++              <div className="login-links">
++                <Link to="/forgot-password" className="forgot-password">
++                  Forgot Password?
++                </Link>
++                <Link to="/signup" className="signup-link">
++                  Don't have an account? Sign up
++                </Link>
++              </div>
++
++              {/* Google Login Option */}
++              <div className="google-login">
++                <div className="divider">OR</div>
++                <a
++                  href="http://localhost:3000/auth/google"
++                  className="google-button"
++                >
++                  <img
++                    src="/google-icon.png"
++                    alt="Google Logo"
++                    className="google-icon"
++                  />
++                  Continue with Google
++                </a>
++              </div>
++            </form>
+           </div>
+         </div>
+-      </footer>
+-    </div>
++
++        <footer className="footer">
++          <div className="footer-content">
++            <div className="footer-section">
++              <h3 className="footer-heading">Blendify</h3>
++              <Link to="/" className="footer-link">
++                Home
++              </Link>
++              <Link to="/login" className="footer-link">
++                Login
++              </Link>
++            </div>
++
++            <div className="footer-section">
++              <h3 className="footer-heading">Help</h3>
++              <Link to="/faq" className="footer-link">
++                FAQ
++              </Link>
++              <Link to="/contact" className="footer-link">
++                Contact us
++              </Link>
++            </div>
++          </div>
++        </footer>
++      </div>
+     </Layout>
+   );
+ };
+ 
+-export default LoginPage;
+\ No newline at end of file
++export default LoginPage;
+diff --git a/front/src/components/Settings.jsx b/front/src/components/Settings.jsx
+index 034fc96..f6c9f48 100644
+--- a/front/src/components/Settings.jsx
++++ b/front/src/components/Settings.jsx
+@@ -1,28 +1,47 @@
+-import React, { useState, useEffect } from 'react';
+-import { useNavigate, Link } from 'react-router-dom';
+-import { Settings as SettingsIcon } from 'lucide-react';
+-import Layout from './Layout';
+-import './Settings.css';
++// client/src/components/Settings.jsx
++import React, { useState, useEffect } from "react";
++import { useNavigate } from "react-router-dom";
++import { profileService } from "../services/profile.service";
+ 
+ const Settings = () => {
+   const navigate = useNavigate();
+-  const [showHeader, setShowHeader] = useState(false);
+-  const [newPassword, setNewPassword] = useState('');
+-  const [isPublic, setIsPublic] = useState(true);
++  const [settings, setSettings] = useState({
++    newPassword: "",
++    isPublic: true,
++  });
+ 
+   useEffect(() => {
+-    const handleScroll = () => {
+-      setShowHeader(window.scrollY > 0);
+-    };
+-
+-    window.addEventListener('scroll', handleScroll);
+-    return () => window.removeEventListener('scroll', handleScroll);
++    loadSettings();
+   }, []);
+ 
+-  const handleSubmit = (e) => {
++  const loadSettings = async () => {
++    try {
++      const response = await profileService.getSettings();
++      setSettings(response.data.settings);
++    } catch (err) {
++      console.error("Failed to load settings:", err);
++    }
++  };
++
++  const handleSubmit = async (e) => {
+     e.preventDefault();
+-    
+-    navigate('/profile'); 
++    try {
++      if (settings.newPassword) {
++        await profileService.changePassword({
++          newPassword: settings.newPassword,
++        });
++      }
++
++      await profileService.updateSettings({
++        privacySettings: {
++          isAccountPrivate: !settings.isPublic,
++        },
++      });
++
++      navigate("/profile");
++    } catch (err) {
++      console.error("Failed to update settings:", err);
++    }
+   };
+ 
+   return (
+@@ -67,7 +86,7 @@ const Settings = () => {
+                       <span className="slider round"></span>
+                     </label>
+                     <span className="privacy-label">
+-                      {isPublic ? 'Public Profile' : 'Private Profile'}
++                      {isPublic ? "Public Profile" : "Private Profile"}
+                     </span>
+                   </div>
+                 </div>
+@@ -84,14 +103,22 @@ const Settings = () => {
+           <div className="settings-footer-content">
+             <div className="settings-footer-section">
+               <h3 className="settings-footer-heading">Blendify</h3>
+-              <Link to="/" className="settings-footer-link">Home</Link>
+-              <Link to="/login" className="settings-footer-link">Login</Link>
++              <Link to="/" className="settings-footer-link">
++                Home
++              </Link>
++              <Link to="/login" className="settings-footer-link">
++                Login
++              </Link>
+             </div>
+-            
++
+             <div className="settings-footer-section">
+               <h3 className="settings-footer-heading">Help</h3>
+-              <Link to="/faq" className="settings-footer-link">FAQ</Link>
+-              <Link to="/contact" className="settings-footer-link">Contact us</Link>
++              <Link to="/faq" className="settings-footer-link">
++                FAQ
++              </Link>
++              <Link to="/contact" className="settings-footer-link">
++                Contact us
++              </Link>
+             </div>
+           </div>
+         </footer>
+@@ -100,4 +127,4 @@ const Settings = () => {
+   );
+ };
+ 
+-export default Settings;
+\ No newline at end of file
++export default Settings;

@@ -1,28 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Settings as SettingsIcon } from 'lucide-react';
-import Layout from './Layout';
-import './Settings.css';
+// client/src/components/Settings.jsx
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { profileService } from "../services/profile.service";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [showHeader, setShowHeader] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [isPublic, setIsPublic] = useState(true);
+  const [settings, setSettings] = useState({
+    newPassword: "",
+    isPublic: true,
+  });
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowHeader(window.scrollY > 0);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    loadSettings();
   }, []);
 
-  const handleSubmit = (e) => {
+  const loadSettings = async () => {
+    try {
+      const response = await profileService.getSettings();
+      setSettings(response.data.settings);
+    } catch (err) {
+      console.error("Failed to load settings:", err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    navigate('/profile'); 
+    try {
+      if (settings.newPassword) {
+        await profileService.changePassword({
+          newPassword: settings.newPassword,
+        });
+      }
+
+      await profileService.updateSettings({
+        privacySettings: {
+          isAccountPrivate: !settings.isPublic,
+        },
+      });
+
+      navigate("/profile");
+    } catch (err) {
+      console.error("Failed to update settings:", err);
+    }
   };
 
   return (
@@ -67,7 +86,7 @@ const Settings = () => {
                       <span className="slider round"></span>
                     </label>
                     <span className="privacy-label">
-                      {isPublic ? 'Public Profile' : 'Private Profile'}
+                      {isPublic ? "Public Profile" : "Private Profile"}
                     </span>
                   </div>
                 </div>
@@ -84,14 +103,22 @@ const Settings = () => {
           <div className="settings-footer-content">
             <div className="settings-footer-section">
               <h3 className="settings-footer-heading">Blendify</h3>
-              <Link to="/" className="settings-footer-link">Home</Link>
-              <Link to="/login" className="settings-footer-link">Login</Link>
+              <Link to="/" className="settings-footer-link">
+                Home
+              </Link>
+              <Link to="/login" className="settings-footer-link">
+                Login
+              </Link>
             </div>
-            
+
             <div className="settings-footer-section">
               <h3 className="settings-footer-heading">Help</h3>
-              <Link to="/faq" className="settings-footer-link">FAQ</Link>
-              <Link to="/contact" className="settings-footer-link">Contact us</Link>
+              <Link to="/faq" className="settings-footer-link">
+                FAQ
+              </Link>
+              <Link to="/contact" className="settings-footer-link">
+                Contact us
+              </Link>
             </div>
           </div>
         </footer>

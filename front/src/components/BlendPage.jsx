@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import Layout from './Layout';
-import './BlendPage.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { blendService } from "../services/blend.service";
 
 const BlendPage = () => {
   const navigate = useNavigate();
-  const [showHeader, setShowHeader] = useState(false);
+  const [blendName, setBlendName] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowHeader(window.scrollY > 0);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/importmedia');
-    
+    try {
+      const formData = new FormData();
+      formData.append("title", blendName);
+      // Add other form data as needed
+
+      await blendService.createBlend(formData);
+      navigate("/importmedia");
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to create blend");
+    }
   };
 
   return (
@@ -48,7 +47,9 @@ const BlendPage = () => {
               <div className="blend-form-group">
                 <input type="text" placeholder="Blend Name" required />
               </div>
-              <button type="submit" className="blend-button">Blend</button>
+              <button type="submit" className="blend-button">
+                Blend
+              </button>
             </form>
           </div>
         </div>
@@ -57,14 +58,22 @@ const BlendPage = () => {
           <div className="blend-footer-content">
             <div className="blend-footer-section">
               <h3 className="blend-footer-heading">Blendify</h3>
-              <Link to="/" className="blend-footer-link">Home</Link>
-              <Link to="/login" className="blend-footer-link">Login</Link>
+              <Link to="/" className="blend-footer-link">
+                Home
+              </Link>
+              <Link to="/login" className="blend-footer-link">
+                Login
+              </Link>
             </div>
-            
+
             <div className="blend-footer-section">
               <h3 className="blend-footer-heading">Help</h3>
-              <Link to="/faq" className="blend-footer-link">FAQ</Link>
-              <Link to="/contact" className="blend-footer-link">Contact us</Link>
+              <Link to="/faq" className="blend-footer-link">
+                FAQ
+              </Link>
+              <Link to="/contact" className="blend-footer-link">
+                Contact us
+              </Link>
             </div>
           </div>
         </footer>

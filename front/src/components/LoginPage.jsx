@@ -1,74 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import './LoginPage.css';
-import Layout from './Layout';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import Layout from "./Layout";
+import "./LoginPage.css";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [showHeader, setShowHeader] = useState(false);
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setShowHeader(window.scrollY > 0);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value,
+    });
+    // Clear error when user starts typing
+    if (error) setError("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/blend');
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/auth/login",
+        credentials,
+      );
+
+      if (response.data.accesstoken && response.data.refreshtoken) {
+        // Store tokens
+        localStorage.setItem("accessToken", response.data.accesstoken);
+        localStorage.setItem("refreshToken", response.data.refreshtoken);
+
+        // Navigate to blend page on successful login
+        navigate("/blend");
+      } else {
+        setError("Invalid response from server");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(
+        err.response?.data?.error?.message ||
+          err.response?.data?.error ||
+          "Login failed. Please check your credentials.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Layout>
-    <div className="login-body">
-      {showHeader && (
-        <div className="fixed-header">
-          <div className="header-content">
-            <h1 className="header-title">Blendify</h1>
-            <Link to="/login" className="header-login-button">Login</Link>
-          </div>
-        </div>
-      )}
-     
-      
-      <div className="login-main-content">
-        <div className="login-container">
-          <div className="login-ring"></div>
-          <div className="login-text-container">
-            <h1 className="login-title">Blendify</h1>
-            <p className="login-subtitle">Blend, Mash, Love, Share!</p>
-          </div>
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="login-form-group">
-              <input type="text" placeholder="Username" required />
+      <div className="login-body">
+        {showHeader && (
+          <div className="fixed-header">
+            <div className="header-content">
+              <h1 className="header-title">Blendify</h1>
+              <Link to="/login" className="header-login-button">
+                Login
+              </Link>
             </div>
-            <div className="login-form-group">
-              <input type="password" placeholder="Password" required />
-            </div>
-            <button type="submit" className="login-button">Login</button>
-          </form>
-        </div>
-      </div>
+          </div>
+        )}
 
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h3 className="footer-heading">Blendify</h3>
-            <Link to="/" className="footer-link">Home</Link>
-            <Link to="/login" className="footer-link">Login</Link>
-          </div>
-          
-          <div className="footer-section">
-            <h3 className="footer-heading">Help</h3>
-            <Link to="/faq" className="footer-link">FAQ</Link>
-            <Link to="/contact" className="footer-link">Contact us</Link>
+        <div className="login-main-content">
+          <div className="login-container">
+            <div className="login-ring"></div>
+            <div className="login-text-container">
+              <h1 className="login-title">Blendify</h1>
+              <p className="login-subtitle">Blend, Mash, Love, Share!</p>
+            </div>
+
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="login-form-group">
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  value={credentials.username}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className={error ? "error" : ""}
+                />
+              </div>
+
+              <div className="login-form-group">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={credentials.password}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className={error ? "error" : ""}
+                />
+              </div>
+
+              {error && <div className="error-message">{error}</div>}
+
+              <button
+                type="submit"
+                className={`login-button ${loading ? "loading" : ""}`}
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Login"}
+              </button>
+
+              <div className="login-links">
+                <Link to="/forgot-password" className="forgot-password">
+                  Forgot Password?
+                </Link>
+                <Link to="/signup" className="signup-link">
+                  Don't have an account? Sign up
+                </Link>
+              </div>
+
+              {/* Google Login Option */}
+              <div className="google-login">
+                <div className="divider">OR</div>
+                <a
+                  href="http://localhost:3000/auth/google"
+                  className="google-button"
+                >
+                  <img
+                    src="/google-icon.png"
+                    alt="Google Logo"
+                    className="google-icon"
+                  />
+                  Continue with Google
+                </a>
+              </div>
+            </form>
           </div>
         </div>
-      </footer>
-    </div>
+
+        <footer className="footer">
+          <div className="footer-content">
+            <div className="footer-section">
+              <h3 className="footer-heading">Blendify</h3>
+              <Link to="/" className="footer-link">
+                Home
+              </Link>
+              <Link to="/login" className="footer-link">
+                Login
+              </Link>
+            </div>
+
+            <div className="footer-section">
+              <h3 className="footer-heading">Help</h3>
+              <Link to="/faq" className="footer-link">
+                FAQ
+              </Link>
+              <Link to="/contact" className="footer-link">
+                Contact us
+              </Link>
+            </div>
+          </div>
+        </footer>
+      </div>
     </Layout>
   );
 };
