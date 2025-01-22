@@ -1,0 +1,275 @@
+.blend-body {
+    margin: 0;
+    padding: 0;
+    background-color: #181d38;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.blend-fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #242a48;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    height: 90px;
+    display: flex;
+    align-items: center;
+}
+
+.blend-header-content {
+    padding: 0 40px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.blend-explore-button,
+.blend-profile-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    letter-spacing: 0.6px;
+}
+
+.blend-explore-button:hover,
+.blend-profile-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.blend-main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 0;
+}
+
+.blend-container {
+    position: relative;
+    width: 540px;
+    height: 540px;
+}
+
+.blend-ring {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        red, orange, yellow, green, blue, indigo, violet, red
+    );
+    mask: radial-gradient(closest-side, transparent 85%, black 71%);
+    -webkit-mask: radial-gradient(closest-side, transparent 85%, black 71%);
+    animation: blend-rotate 8s linear infinite;
+}
+
+.blend-text-container {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.blend-title {
+    color: #FF69B4;
+    font-size: 48px;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+    margin: 0;
+    padding: 0;
+}
+
+.blend-form {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blend-form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.blend-form-group input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.blend-form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.blend-form-group input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.blend-button {
+    background: linear-gradient(45deg, #FF1493, #4169E1);
+    color: white;
+    border: none;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: tahoma, sans-serif;
+    letter-spacing: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(65, 105, 225, 0.3);
+}
+
+.blend-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+}
+
+.blend-button::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    animation: blend-pulse 2s infinite;
+}
+
+.blend-button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 5px 25px rgba(65, 105, 225, 0.5);
+    background: linear-gradient(45deg, #FF1493, #4169E1, #FF1493);
+    background-size: 200% 200%;
+    animation: blend-gradient 3s ease infinite;
+}
+
+.blend-button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.blend-button:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+@keyframes blend-pulse {
+    0% {
+        transform: scale(1);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        transform: scale(1.1);
+        border-color: rgba(255, 255, 255, 0);
+    }
+    100% {
+        transform: scale(1);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+@keyframes blend-gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.blend-footer {
+    background-color: #242a48;
+    padding: 60px 0;
+    margin-top: auto;
+    width: 100%;
+}
+
+.blend-footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 20px;
+}
+
+.blend-footer-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.blend-footer-heading {
+    color: #919191;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.blend-footer-link {
+    color: white;
+    text-decoration: none;
+    margin: 8px 0;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.blend-footer-link:hover {
+    color: #007bff;
+}
+
+@keyframes blend-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
