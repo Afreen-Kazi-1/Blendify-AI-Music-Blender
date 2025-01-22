@@ -1,0 +1,8 @@
+diff a/front/src/components/BlendPage.jsx b/front/src/components/BlendPage.jsx	(rejected hunks)
+@@ -73,4 +82,4 @@ const BlendPage = () => {
+   );
+ };
+ 
+-export default BlendPage;
+\ No newline at end of file
++export default BlendPage;

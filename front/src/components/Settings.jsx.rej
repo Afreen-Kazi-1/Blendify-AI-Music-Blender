@@ -1,0 +1,8 @@
+diff a/front/src/components/Settings.jsx b/front/src/components/Settings.jsx	(rejected hunks)
+@@ -100,4 +127,4 @@ const Settings = () => {
+   );
+ };
+ 
+-export default Settings;
+\ No newline at end of file
++export default Settings;
