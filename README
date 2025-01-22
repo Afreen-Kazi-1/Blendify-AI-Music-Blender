@@ -1,0 +1,13 @@
+/front - frontend
+
+```
+cd front
+npm run dev
+```
+
+/back - backend
+
+```
+cd back
+npm start
+```

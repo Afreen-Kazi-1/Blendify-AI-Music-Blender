@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Layout from './Layout';
 import './BlendPage.css';
-import { apiClient } from '../services/api';
-import { API_ENDPOINTS } from '../config/api';
 
 const BlendPage = () => {
   const navigate = useNavigate();
@@ -18,19 +16,10 @@ const BlendPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const blendName = e.target.elements[0].value;
+    navigate('/importmedia');
     
-    try {
-      await apiClient.request(API_ENDPOINTS.blend.create, {
-        method: 'POST',
-        body: JSON.stringify({ name: blendName })
-      });
-      navigate('/importmedia');
-    } catch (error) {
-      console.error('Failed to create blend:', error);
-    }
   };
 
   return (
