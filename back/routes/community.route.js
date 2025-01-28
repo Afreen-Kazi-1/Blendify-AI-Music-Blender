@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { verifyAccessToken} = require('../jwt')
-const { getUserProjects, getAllPublicProjects } = require('../controllers/controller.community');
+const { getUserProjects, getAllPublicProjects, likeProject, addComment, getComments } = require('../controllers/controller.community');
 
 router.get('/my-projects', verifyAccessToken, getUserProjects);
 

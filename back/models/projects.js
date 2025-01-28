@@ -25,8 +25,46 @@ const projectSchema = new mongoose.Schema({
   },
   blendFileUrl: { 
     type: String, 
-    required: true 
+    required: true,
   },
+  constituentSongs: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      artist: {
+        type: String,
+        required: true,
+      },
+      songFileUrl: {
+        type: String,
+        required: true,
+      }
+    }
+  ],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ],
+  comments: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      text: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      }
+    }
+  ]
 });
 
 module.exports = mongoose.model('Project', projectSchema);

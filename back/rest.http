@@ -151,6 +151,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2O
 GET http://localhost:3000/community/public-projects
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc2OTUyNGQ3NjI1OTU0ZmM0MzI2ZWIiLCJpYXQiOjE3MzY2MDgyODIsImV4cCI6MTczNjYxMTg4MiwiYXVkIjoiNjc3Njk1MjRkNzYyNTk1NGZjNDMyNmViIiwiaXNzIjoiYmxlbmRpZnkuY29tIn0.ySXkN-GUeMPz014xaJXDlk1-FGIBZrD8Bm7KTHxmH1k
 
+### like a project
+POST http://localhost:3000/api/community/like
+Content-Type: application/json
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+{
+    "projectId": "PROJECT_ID_HERE"
+}
+
+### comment on a project
+POST http://localhost:3000/api/community/comment
+Content-Type: application/json
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+{
+    "projectId": "PROJECT_ID_HERE",
+    "comment": "This is an amazing mashup!"
+}
+### getting likes and comments
+GET http://localhost:5000/api/community/project/PROJECT_ID_HERE
+Authorization: Bearer YOUR_ACCESS_TOKEN
 
 ###
 GET http://localhost:3000/auth/google
