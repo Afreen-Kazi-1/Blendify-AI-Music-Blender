@@ -17,11 +17,45 @@ const SignUpPage = () => {
       [e.target.name]: e.target.value
     });
   };
+  
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Check if passwords match
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
+  const data = {
+    username: formData.username,
+    email: formData.email,
+    password: formData.password,
+    confirmPassword: formData.confirmPassword,  // Assuming name is the same as username, but can be customized.
   };
+
+  try {
+    const response = await fetch("http://localhost:3000/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("Registration successful!");
+      // You can now store the tokens in localStorage or context for use in other pages
+    } else {
+      alert("Registration failed: " + result.error);
+    }
+  } catch (error) {
+    alert("Failed to register: " + error.message);
+  }
+};
+
+ 
 
   return (
     <Layout>

@@ -13,9 +13,7 @@ const userValidationSchema = Joi.object({
       "any.required": "Username is required."
     }),
 
-    name: Joi.string()
-    .min(1)
-    .required(),
+  
 
     email: Joi.string()
     .email()
@@ -35,7 +33,7 @@ const userValidationSchema = Joi.object({
       "any.required": "Password is required."
     }),
 
-  repeatPassword: Joi.any()
+  confirmPassword: Joi.any()
     .valid(Joi.ref('password'))
     .required()
     .messages({

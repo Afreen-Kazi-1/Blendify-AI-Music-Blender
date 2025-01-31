@@ -8,24 +8,24 @@ module.exports = {
     
     register: async(req, res, next) => {
         try {
-            const {email, name, username, password} =req.body
+            const {email, username, password, confirmPassword} =req.body
             const result = await userValidationSchema.validateAsync(req.body)
             console.log(result)
      
      
             const doesExist = await User.findOne({email: email })
-            if (doesExist) throw createError.Conflict('${email} has already been registered')
+            if (doesExist) throw createError.Conflict(`${email} has already been registered`)
      
      
-            const user = new User({email, name, username, password})
+            const user = new User({email, username, password})
             const savedUser = await user.save()
             const accesstoken = await signAccessToken(savedUser.id)
             const refreshtoken = await signRefreshtoken(savedUser.id)
      
-            res.send({ accesstoken, refreshtoken })
+            res.send({ accesstoken, refreshtoken, user: savedUser })
      
      
-            res.send(savedUser)
+            
         } catch (error) {
             next(error)
         }
