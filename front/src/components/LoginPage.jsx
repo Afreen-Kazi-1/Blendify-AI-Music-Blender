@@ -124,15 +124,6 @@ const LoginPage = () => {
                 {loading ? "Logging in..." : "Login"}
               </button>
 
-              <div className="login-links">
-                <Link to="/forgot-password" className="forgot-password">
-                  Forgot Password?
-                </Link>
-                <Link to="/signup" className="signup-link">
-                  Don't have an account? Sign up
-                </Link>
-              </div>
-
               {/* Google Login Option */}
               <div className="google-login">
                 <div className="divider">OR</div>
