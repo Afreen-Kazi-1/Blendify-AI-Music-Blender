@@ -1,41 +1,75 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { blendService } from "../services/blend.service";
+import Layout from "../components/Layout";
+import './BlendPage.css';
 
 const BlendPage = () => {
   const navigate = useNavigate();
   const [blendName, setBlendName] = useState("");
+  const [files, setFiles] = useState([]);
   const [error, setError] = useState("");
+
+  const handleFileChange = (e) => {
+    setFiles(e.target.files);
+  };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (files.length < 2) {
+  //     setError("Please upload exactly two songs.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("title", blendName);
+  //     for (let i = 0; i < files.length; i++) {
+  //       formData.append("files", files[i]);
+  //     }
+
+  //     await blendService.createBlend(formData);
+  //     navigate("/importmedia");
+  //   } catch (err) {
+  //     setError(err.response?.data?.error || "Failed to create blend");
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (files.length < 2) {
+      setError("Please upload exactly two songs.");
+      return;
+    }
+  
     try {
       const formData = new FormData();
       formData.append("title", blendName);
-      // Add other form data as needed
-
+      for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+      }
+  
       await blendService.createBlend(formData);
-      navigate("/importmedia");
+      navigate("/importmedia,{ state: { uploadedFiles: files } } ");  //  Route to ImportMedia.jsx
     } catch (err) {
       setError(err.response?.data?.error || "Failed to create blend");
     }
   };
+  
 
   return (
     <Layout>
       <div className="blend-body">
-        {showHeader && (
-          <div className="blend-fixed-header">
-            <div className="blend-header-content">
-              <Link to="/explore" className="blend-explore-button">
-                Explore Community
-              </Link>
-              <Link to="/profile" className="blend-profile-button">
-                My Profile
-              </Link>
-            </div>
+        <div className="blend-fixed-header">
+          <div className="blend-header-content">
+            <Link to="/explore" className="blend-explore-button">
+              Explore Community
+            </Link>
+            <Link to="/profile" className="blend-profile-button">
+              My Profile
+            </Link>
           </div>
-        )}
+        </div>
 
         <div className="blend-main-content">
           <div className="blend-container">
@@ -43,9 +77,25 @@ const BlendPage = () => {
             <div className="blend-text-container">
               <h1 className="blend-title">Create Blend</h1>
             </div>
+            {error && <p className="error-message">{error}</p>}
             <form className="blend-form" onSubmit={handleSubmit}>
               <div className="blend-form-group">
-                <input type="text" placeholder="Blend Name" required />
+                <input
+                  type="text"
+                  placeholder="Blend Name"
+                  value={blendName}
+                  onChange={(e) => setBlendName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="blend-form-group">
+                <input
+                  type="file"
+                  accept="audio/*"
+                  multiple
+                  onChange={handleFileChange}
+                  required
+                />
               </div>
               <button type="submit" className="blend-button">
                 Blend
