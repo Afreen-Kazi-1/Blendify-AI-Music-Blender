@@ -7,55 +7,18 @@ import './BlendPage.css';
 const BlendPage = () => {
   const navigate = useNavigate();
   const [blendName, setBlendName] = useState("");
-  const [files, setFiles] = useState([]);
   const [error, setError] = useState("");
-
-  const handleFileChange = (e) => {
-    setFiles(e.target.files);
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (files.length < 2) {
-  //     setError("Please upload exactly two songs.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("title", blendName);
-  //     for (let i = 0; i < files.length; i++) {
-  //       formData.append("files", files[i]);
-  //     }
-
-  //     await blendService.createBlend(formData);
-  //     navigate("/importmedia");
-  //   } catch (err) {
-  //     setError(err.response?.data?.error || "Failed to create blend");
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (files.length < 2) {
-      setError("Please upload exactly two songs.");
-      return;
-    }
-  
+    
     try {
-      const formData = new FormData();
-      formData.append("title", blendName);
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-      }
-  
-      await blendService.createBlend(formData);
-      navigate("/importmedia,{ state: { uploadedFiles: files } } ");  //  Route to ImportMedia.jsx
+      await blendService.createBlend({ title: blendName });
+      navigate("/importmedia");
     } catch (err) {
       setError(err.response?.data?.error || "Failed to create blend");
     }
   };
-  
 
   return (
     <Layout>
@@ -85,15 +48,6 @@ const BlendPage = () => {
                   placeholder="Blend Name"
                   value={blendName}
                   onChange={(e) => setBlendName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="blend-form-group">
-                <input
-                  type="file"
-                  accept="audio/*"
-                  multiple
-                  onChange={handleFileChange}
                   required
                 />
               </div>
