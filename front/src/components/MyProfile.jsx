@@ -1,45 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Settings, User, Play, Pause } from 'lucide-react';
-import Layout from './Layout';
-import './MyProfile.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Settings, User, Play, Pause } from "lucide-react";
+import Layout from "./Layout";
+import "./MyProfile.css";
 
 const MyProfile = () => {
   const [showHeader, setShowHeader] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [playingStates, setPlayingStates] = useState({});
+  const [username, setUsername] = useState(""); // State to store username
 
   const projects = [
     { id: 1, name: "Project 1", duration: "3:45" },
     { id: 2, name: "Project 2", duration: "4:20" },
     { id: 3, name: "Project 3", duration: "3:15" },
-    { id: 4, name: "Project 4", duration: "5:00" }
+    { id: 4, name: "Project 4", duration: "5:00" },
   ];
+
+  // Fetch username from localStorage when the component mounts
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("username");
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+  }, []);
+
+  // Once the username is set, retrieve the profile image for that user
+  useEffect(() => {
+    if (username) {
+      const savedProfileImage = localStorage.getItem(`profileImage_${username}`);
+      if (savedProfileImage) {
+        setProfileImage(savedProfileImage);
+      }
+    }
+  }, [username]);
 
   useEffect(() => {
     const handleScroll = () => {
       setShowHeader(window.scrollY > 0);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file && username) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
+        const imageData = reader.result;
+        setProfileImage(imageData);
+        // Save image in localStorage with a key specific to the username
+        localStorage.setItem(`profileImage_${username}`, imageData);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const togglePlay = (projectId) => {
-    setPlayingStates(prev => ({
+    setPlayingStates((prev) => ({
       ...prev,
-      [projectId]: !prev[projectId]
+      [projectId]: !prev[projectId],
     }));
   };
 
@@ -64,7 +86,11 @@ const MyProfile = () => {
               <div className="profile-image-container">
                 <label htmlFor="profile-upload" className="profile-upload-label">
                   {profileImage ? (
-                    <img src={profileImage} alt="Profile" className="profile-image" />
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className="profile-image"
+                    />
                   ) : (
                     <User size={120} color="#ffffff" />
                   )}
@@ -77,7 +103,7 @@ const MyProfile = () => {
                   className="profile-upload-input"
                 />
               </div>
-              <h2 className="profile-username">@username</h2>
+              <h2 className="profile-username">@{username}</h2>
             </div>
           </div>
 
@@ -88,7 +114,7 @@ const MyProfile = () => {
                   <h3 className="project-name">{project.name}</h3>
                   <span className="project-duration">{project.duration}</span>
                 </div>
-                <button 
+                <button
                   className="play-button"
                   onClick={() => togglePlay(project.id)}
                 >
@@ -107,14 +133,22 @@ const MyProfile = () => {
           <div className="profile-footer-content">
             <div className="profile-footer-section">
               <h3 className="profile-footer-heading">Blendify</h3>
-              <Link to="/" className="profile-footer-link">Home</Link>
-              <Link to="/login" className="profile-footer-link">Login</Link>
+              <Link to="/" className="profile-footer-link">
+                Home
+              </Link>
+              <Link to="/login" className="profile-footer-link">
+                Login
+              </Link>
             </div>
-            
+
             <div className="profile-footer-section">
               <h3 className="profile-footer-heading">Help</h3>
-              <Link to="/faq" className="profile-footer-link">FAQ</Link>
-              <Link to="/contact" className="profile-footer-link">Contact us</Link>
+              <Link to="/faq" className="profile-footer-link">
+                FAQ
+              </Link>
+              <Link to="/contact" className="profile-footer-link">
+                Contact us
+              </Link>
             </div>
           </div>
         </footer>
