@@ -105,16 +105,12 @@ git clone <url>
 
 ## 👨‍💻Team Members
 
-Add names of your team members with their emails and links to their GitHub accounts
-
 - [Tisha Rathi](https://github.com/Toto-Roro)
 - [Afreen Kazi ](https://github.com/Afreen-Kazi-1)
 - [Harsh Sagare](https://github.com/hssagare)
 - [Abhiman Shirsath](https://github.com/)
 
 ## 👨‍🏫Mentors
-
-Add names of your mentors with their emails and links to their GitHub accounts
 
 - [Labhansh Naik ]()):
 - [Kartik Gupta ]():
