@@ -3,7 +3,7 @@
     <img src="./Untitled.png" alt="CoC Inheritance 2024" width="500" height="166">
   </a>
   <br>
- Project Name
+ Blendify 
 </h1>
 
 <div align="center">
