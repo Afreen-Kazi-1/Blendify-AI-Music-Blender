@@ -14,6 +14,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Add scroll event listener for header visibility
   useEffect(() => {
     const handleScroll = () => {
       setShowHeader(window.scrollY > 0);
@@ -44,9 +45,10 @@ const LoginPage = () => {
       );
 
       if (response.data.accesstoken && response.data.refreshtoken) {
-        // Store tokens
+        // Store tokens and username
         localStorage.setItem("accessToken", response.data.accesstoken);
         localStorage.setItem("refreshToken", response.data.refreshtoken);
+        localStorage.setItem("username", credentials.username); // Store username
 
         // Navigate to blend page on successful login
         navigate("/blend");
@@ -68,13 +70,11 @@ const LoginPage = () => {
   return (
     <Layout>
       <div className="login-body">
+        {/* Conditionally render the header based on showHeader state */}
         {showHeader && (
           <div className="fixed-header">
             <div className="header-content">
               <h1 className="header-title">Blendify</h1>
-              <Link to="/login" className="header-login-button">
-                Login
-              </Link>
             </div>
           </div>
         )}
@@ -97,7 +97,6 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  className={error ? "error" : ""}
                 />
               </div>
 
@@ -110,7 +109,6 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   disabled={loading}
-                  className={error ? "error" : ""}
                 />
               </div>
 
@@ -126,17 +124,11 @@ const LoginPage = () => {
 
               {/* Google Login Option */}
               <div className="google-login">
-                <div className="divider">OR</div>
-                <a
-                  href="http://localhost:3000/auth/google"
-                  className="google-button"
-                >
-                  <img
-                    src="/google-icon.png"
-                    alt="Google Logo"
-                    className="google-icon"
-                  />
-                  Continue with Google
+                <a href="/auth/google" className="google-button">
+                  <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                    <path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
+                  </svg>
+                  Google
                 </a>
               </div>
             </form>
