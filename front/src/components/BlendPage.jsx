@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { blendService } from "../services/blend.service";
 import Layout from "../components/Layout";
+import MusicNav from "../components/MusicNav";
 import './BlendPage.css';
 
 const BlendPage = () => {
   const navigate = useNavigate();
   const [blendName, setBlendName] = useState("");
   const [error, setError] = useState("");
+  const [showHeader, setShowHeader] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowHeader(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       await blendService.createBlend({ title: blendName });
       navigate("/importmedia");
@@ -23,16 +34,19 @@ const BlendPage = () => {
   return (
     <Layout>
       <div className="blend-body">
-        <div className="blend-fixed-header">
-          <div className="blend-header-content">
-            <Link to="/explore" className="blend-explore-button">
-              Explore Community
-            </Link>
-            <Link to="/profile" className="blend-profile-button">
-              My Profile
-            </Link>
+        <MusicNav />
+        {showHeader && (
+          <div className="blend-fixed-header">
+            <div className="blend-header-content">
+              <Link to="/explore" className="blend-explore-button">
+                Explore Community
+              </Link>
+              <Link to="/profile" className="blend-profile-button">
+                My Profile
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="blend-main-content">
           <div className="blend-container">
